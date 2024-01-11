@@ -4,7 +4,7 @@
 #include <string.h>
 char look = '\0';
 
-void getch(void)
+void getch()
 {
     look = getchar();
 }
@@ -38,7 +38,7 @@ void match(char x)
     }
 }
 
-char get_name(void)
+char get_name()
 {
     if (!isalpha(look))
     {
@@ -49,7 +49,7 @@ char get_name(void)
     return new_name;
 }
 
-char get_num(void)
+char get_num()
 {
     if (!isdigit(look))
     {
@@ -72,12 +72,64 @@ void emitln(char *s)
     printf("\n");
 }
 
-void init(void)
+void init()
 {
     getch();
 }
 
-void factor(void)
+void add()
+{
+    match('+');
+    term();
+    emitln("pop rcx");
+    emitln("add rbx, rcx");
+}
+
+void subtract()
+{
+    match('-');
+    term();
+    emitln("pop rcx");
+    emitln("sub rbx, rcx");
+    emitln("neg rbx");
+}
+int is_addop(char c)
+{
+    if (c == '-' || c == '+')
+    {
+        return 1;
+    }
+    return 0;
+}
+void expression()
+{
+    if (is_addop(look))
+    {
+        emitln('CLR D0');
+    }
+    else{
+        term();
+    }
+    term();
+    while (is_addop(look) == 1)
+    {
+        emitln("push rbx");
+        if (look == '+')
+        {
+            add();
+        }
+        else if (look == '-')
+        {
+            subtract();
+        }
+        else
+        {
+            expected("Addop");
+        }
+    }
+}
+
+void factor()
 {
     char result[100];
     if (look == '(')
@@ -88,33 +140,17 @@ void factor(void)
     }
     else 
     {
-    sprintf(result, "mov ebx, %c", get_num());
+    sprintf(result, "mov rbx, %c", get_num());
     emitln(result);
     }
 }
 
-void multiply(void)
-{
-    match('*');
-    factor();
-    emitln("pop ecx");
-    emitln("mul ebx, ecx");
-}
-
-void divide(void)
-{
-    match('/');
-    factor();
-    emitln("pop ecx");
-    emitln("div ecx, ebx");
-}
-
-void term(void)
+void term()
 {
     factor();
     while (look == '*' || look == '/')
     {
-        emitln("push ebx");
+        emitln("push rbx");
         if (look == '*')
         {
             multiply();
@@ -131,42 +167,21 @@ void term(void)
     }
 }
 
-void add()
+
+void multiply()
 {
-    match('+');
-    term();
-    emitln("pop ecx");
-    emitln("add ebx, ecx");
+    match('*');
+    factor();
+    emitln("pop rcx");
+    emitln("mul rbx, rcx");
 }
 
-void subtract()
+void divide()
 {
-    match('-');
-    term();
-    emitln("pop ecx");
-    emitln("sub ebx, ecx");
-    emitln("neg ebx");
-}
-
-void expression(void)
-{
-    term();
-    while (look == '+' || look == '-')
-    {
-        emitln("push ebx");
-        if (look == '+')
-        {
-            add();
-        }
-        else if (look == '-')
-        {
-            subtract();
-        }
-        else
-        {
-            expected("Addop");
-        }
-    }
+    match('/');
+    factor();
+    emitln("pop rcx");
+    emitln("div rcx, rbx");
 }
 
 int main()
