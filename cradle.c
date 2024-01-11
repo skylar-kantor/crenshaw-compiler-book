@@ -80,8 +80,17 @@ void init(void)
 void factor(void)
 {
     char result[100];
+    if (look == '(')
+    {
+        match('(');
+        expression();
+        match(')');
+    }
+    else 
+    {
     sprintf(result, "mov ebx, %c", get_num());
     emitln(result);
+    }
 }
 
 void multiply(void)
