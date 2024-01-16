@@ -105,7 +105,7 @@ void expression()
 {
     if (is_addop(look) == 1)
     {
-        emitln('CLR D0');
+        emitln("CLR D0");
     }
     else{
         term();
