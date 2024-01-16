@@ -129,6 +129,17 @@ void expression()
     }
 }
 
+void assignment() {
+    char name = get_name();
+    match('=');
+    expression();
+    char output[100];
+    sprintf(output, "lea %c \%rip, \%rcx", name);
+    emitln(output);
+    emitln("mov \%rbx, \%rcx");
+
+}
+
 void factor()
 {
     char result[100];
@@ -187,6 +198,10 @@ void divide()
 int main()
 {
     init();
-    expression();
+    assignment();
+    if (look != '\n')
+    {
+        expected("Newline");
+    }
     return 0;
 }
