@@ -107,10 +107,11 @@ void expression()
     {
         emitln("CLR D0");
     }
-    else{
+    else
+    {
         term();
     }
-   
+
     while (is_addop(look) == 1)
     {
         emitln("push rbx");
@@ -129,7 +130,8 @@ void expression()
     }
 }
 
-void assignment() {
+void assignment()
+{
     char name = get_name();
     match('=');
     expression();
@@ -137,7 +139,6 @@ void assignment() {
     sprintf(output, "lea %c \%rip, \%rcx", name);
     emitln(output);
     emitln("mov \%rbx, \%rcx");
-
 }
 
 void factor()
@@ -149,10 +150,10 @@ void factor()
         expression();
         match(')');
     }
-    else 
+    else
     {
-    sprintf(result, "mov rbx, %c", get_num());
-    emitln(result);
+        sprintf(result, "mov rbx, %c", get_num());
+        emitln(result);
     }
 }
 
@@ -174,10 +175,8 @@ void term()
         {
             expected("Mulop");
         }
-        
     }
 }
-
 
 void multiply()
 {
