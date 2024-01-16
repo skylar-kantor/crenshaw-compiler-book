@@ -51,7 +51,7 @@ char get_name()
 
 char get_num()
 {
-    if (!isdigit(look))
+    if (isdigit(look) == 0)
     {
         expected("Integer");
     }
@@ -103,14 +103,14 @@ int is_addop(char c)
 }
 void expression()
 {
-    if (is_addop(look))
+    if (is_addop(look) == 1)
     {
         emitln('CLR D0');
     }
     else{
         term();
     }
-    term();
+   
     while (is_addop(look) == 1)
     {
         emitln("push rbx");
