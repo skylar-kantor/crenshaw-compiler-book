@@ -75,23 +75,23 @@ void emitln(char *s)
 void init()
 {
     getch();
+   
 }
 
 void add()
 {
     match('+');
     term();
-    emitln("pop rcx");
-    emitln("add rbx, rcx");
+    //emitln("pop rcx");
+    emitln("a = a + b;");
 }
 
 void subtract()
 {
     match('-');
     term();
-    emitln("pop rcx");
-    emitln("sub rbx, rcx");
-    emitln("neg rbx");
+    emitln("a = a - b;");
+    emitln("a *= -1;");
 }
 int is_addop(char c)
 {
@@ -114,7 +114,7 @@ void expression()
 
     while (is_addop(look) == 1)
     {
-        emitln("push rbx");
+        emitln("b = a;");
         if (look == '+')
         {
             add();
@@ -136,9 +136,8 @@ void assignment()
     match('=');
     expression();
     char output[100];
-    sprintf(output, "lea %c \%rip, \%rcx", name);
+    sprintf(output, "int %c = a;", name);
     emitln(output);
-    emitln("mov \%rbx, \%rcx");
 }
 
 void factor()
@@ -152,7 +151,7 @@ void factor()
     }
     else
     {
-        sprintf(result, "mov rbx, %c", get_num());
+        sprintf(result, "a = %c;", get_num());
         emitln(result);
     }
 }
@@ -162,7 +161,7 @@ void term()
     factor();
     while (look == '*' || look == '/')
     {
-        emitln("push rbx");
+        emitln("b = a;");
         if (look == '*')
         {
             multiply();
@@ -182,25 +181,29 @@ void multiply()
 {
     match('*');
     factor();
-    emitln("pop rcx");
-    emitln("mul rbx, rcx");
+    emitln("a = a * b;");
 }
 
 void divide()
 {
     match('/');
     factor();
-    emitln("pop rcx");
-    emitln("div rcx, rbx");
+    emitln("a = a / b;");
 }
 
 int main()
 {
     init();
+    emitln("int main(){");
+    emitln("int a = 0;");
+    emitln("int b = 0;");
     assignment();
+    emitln("return 0;");
+    emitln("}");
     if (look != '\n')
     {
         expected("Newline");
     }
+
     return 0;
 }
