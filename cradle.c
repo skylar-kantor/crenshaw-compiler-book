@@ -188,7 +188,7 @@ void divide()
 {
     match('/');
     factor();
-    emitln("a = a / b;");
+    emitln("a = b / a;");
 }
 
 int main()
